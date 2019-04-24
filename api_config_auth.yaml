@@ -1,0 +1,26 @@
+type: google.api.Service
+config_version: 3
+
+# Name of the service configuration.
+name: api.endpoints.autom8ter-19.cloud.goog
+
+# API title to appear in the user interface (Google Cloud Console).
+title: Autom8ter API
+apis:
+  - name: api.API
+
+
+authentication:
+  providers:
+    - id: google_service_account
+      # Replace PROJECT_ID with the ID of your GCP project:
+      audiences: https://autom8ter.auth0.com/userinfo
+      # Replace SERVICE-ACCOUNT-ID with your service account's email address.
+      issuer: SERVICE-ACCOUNT-ID
+      jwks_uri: https://autom8ter.auth0.com/.well-known/jwks.json
+
+
+usage:
+  rules:
+    - selector: "*"
+      allow_unregistered_calls: true
