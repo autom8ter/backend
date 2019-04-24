@@ -12,11 +12,9 @@ apis:
 
 authentication:
   providers:
-    - id: google_service_account
-      # Replace PROJECT_ID with the ID of your GCP project:
+    - id: grpc-api
       audiences: https://autom8ter.auth0.com/userinfo
-      # Replace SERVICE-ACCOUNT-ID with your service account's email address.
-      issuer: SERVICE-ACCOUNT-ID
+      issuer: https://autom8ter.auth0.com
       jwks_uri: https://autom8ter.auth0.com/.well-known/jwks.json
 
 

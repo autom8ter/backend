@@ -1,18 +1,19 @@
 package backend
 
 import (
-	"github.com/autom8ter/engine/driver"
 	"github.com/autom8ter/engine"
+	"github.com/autom8ter/engine/driver"
 )
 
 type Backend struct {
-	Plugins []driver.PluginFunc
+	plugins []driver.PluginFunc
 }
 
-func (b *Backend) AddPlugin(fn driver.PluginFunc) {
-	b.Plugins=append(b.Plugins, fn)
+func NewBackend(plugs ...driver.PluginFunc) *Backend {
+	return &Backend{
+		plugs,
+	}
 }
-
 
 func (b *Backend) Serve(addr string, debug bool) error {
 	return engine.Serve(addr, debug, b.asPlugins()...)
@@ -20,8 +21,8 @@ func (b *Backend) Serve(addr string, debug bool) error {
 
 func (b *Backend) asPlugins() []driver.Plugin {
 	plugs := []driver.Plugin{}
-	for _, p := range b.Plugins {
-		plugs = append(plugs, p)
+	for _, v := range b.plugins {
+		plugs = append(plugs, v)
 	}
 	return plugs
 }

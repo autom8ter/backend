@@ -1,19 +1,14 @@
-FROM golang:alpine AS builder
-COPY ./main.go /go/src/github.com/autom8ter/,placeholder,/main.go
-COPY ./vendor /go/src/github.com/autom8ter/,placeholder,/vendor
+FROM golang:alpine
 
-RUN set -ex && \
-  cd /go/src/github.com/autom8ter/,placeholder, && \
-  CGO_ENABLED=0 go build \
-        -tags netgo \
-        -v -a \
-        -ldflags '-extldflags "-static"' && \
-  mv ./,placeholder, /usr/bin/,placeholder,
+RUN apk update \
+  && apk add git
 
-FROM busybox
-ENV SECRET=,placeholder,
-# Retrieve the binary from the previous stage
-COPY --from=builder /usr/bin/,placeholder, /usr/local/bin/,placeholder,
+COPY . /go/src/github.com/autom8ter/backend
 
-# Set the binary as the entrypoint of the container
-ENTRYPOINT [ ",placeholder," ]
+ENV GO111MODULE=on
+RUN cd /go/src/github.com/autom8ter/backend/backend && go build
+RUN mv /go/src/github.com/autom8ter/backend/backend/backend /go/bin
+# Perform any further action as an unprivileged user.
+USER nobody:nobody
+
+ENTRYPOINT ["/go/bin/backend"]
