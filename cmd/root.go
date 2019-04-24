@@ -17,7 +17,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/autom8ter/backend"
-	"github.com/autom8ter/backend/echo"
+	"github.com/autom8ter/backend/utility"
 	"log"
 	"os"
 
@@ -30,7 +30,7 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "backend",
+	Use: "backend",
 	Long: `
 01000010 01100001 01100011 01101011 01100101 01101110 01100100
 
@@ -40,9 +40,8 @@ The Autom8ter gprc API Backend
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := backend.NewBackend(
 
-			echo.NewEchoer().PluginFunc,
-
-			).Serve(viper.GetString("addr"), viper.GetBool("debug"));err != nil {
+			utility.NewUtility().PluginFunc,
+		).Serve(viper.GetString("addr"), viper.GetBool("debug")); err != nil {
 			log.Fatalln(err.Error())
 		}
 	},
