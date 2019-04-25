@@ -9,6 +9,7 @@ import (
 type Utility struct {
 	*Echoer
 	*Marshaler
+	*Renderer
 	driver.PluginFunc
 }
 

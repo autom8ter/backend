@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/autom8ter/backend"
+	"github.com/autom8ter/backend/contact"
 	"github.com/autom8ter/backend/utility"
 	"log"
 	"os"
@@ -39,8 +40,8 @@ The Autom8ter gprc API Backend
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := backend.NewBackend(
-
 			utility.NewUtility().PluginFunc,
+			contact.NewConatact().PluginFunc,
 		).Serve(viper.GetString("addr"), viper.GetBool("debug")); err != nil {
 			log.Fatalln(err.Error())
 		}
