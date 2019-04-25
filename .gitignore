@@ -1,3 +1,4 @@
 vendor
 .idea
 credentials.json
+.DS_Store
