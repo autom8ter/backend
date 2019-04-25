@@ -47,6 +47,8 @@ github.com/autom8ter/api v0.0.0-20190425053332-54b6e0f5bd96 h1:ilP0mhCpM3BSABxUp
 github.com/autom8ter/api v0.0.0-20190425053332-54b6e0f5bd96/go.mod h1:gqApVVhoJFcjb8r/li/fxGBS6/qn+3PKpRLZhVCcP0k=
 github.com/autom8ter/api v0.0.0-20190425055011-f12675228b2e h1:+aTFnwNSxrlV+bP5q5DL0qZ7lu1REV2g2gMr6GXIbOY=
 github.com/autom8ter/api v0.0.0-20190425055011-f12675228b2e/go.mod h1:gqApVVhoJFcjb8r/li/fxGBS6/qn+3PKpRLZhVCcP0k=
+github.com/autom8ter/api v0.0.0-20190425073503-b94af903643c h1:rZaQAhFKwh8W4kP7D63dvbuJ9NoiryLzr8VZMV66w0U=
+github.com/autom8ter/api v0.0.0-20190425073503-b94af903643c/go.mod h1:gqApVVhoJFcjb8r/li/fxGBS6/qn+3PKpRLZhVCcP0k=
 github.com/autom8ter/engine v0.0.0-20190421032226-fadad0594395 h1:R35OfZLJfz27wMqnQ93mjpgbEfhIB/j49DczY5ap0Wc=
 github.com/autom8ter/engine v0.0.0-20190421032226-fadad0594395/go.mod h1:Ls37Jrvtcem1Or5jMi4xcj3Pnb89iYq3aojRyau96ng=
 github.com/autom8ter/gcloud v0.0.0-20190408073117-8b7a9496ac0d h1:ojw06rxJq3DZbuLNTqNXZfZA404B0xfcWwxtyAgTCb4=

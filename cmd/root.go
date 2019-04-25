@@ -20,22 +20,28 @@ import (
 	"github.com/autom8ter/backend"
 	"github.com/autom8ter/backend/config"
 	"github.com/autom8ter/backend/contact"
+	"github.com/autom8ter/backend/user"
 	"github.com/autom8ter/backend/utility"
 	"log"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 )
 
+var usercache = user.NewUserCache()
 var credspath string
 var port int
 var debug bool
+var syncPeriod time.Duration
 
 func init() {
 	api.Util.DotEnv()
 	rootCmd.Flags().IntVarP(&port, "port", "p", 3000, "port to serve on")
 	rootCmd.Flags().StringVarP(&credspath, "creds", "c", "credentials.json", "path to gcp service account credentials (JSON)")
 	rootCmd.Flags().BoolVarP(&debug, "debug", "d", false, "enable debugging mode for development")
+	rootCmd.Flags().DurationVarP(&syncPeriod, "sync", "s", 1*time.Minute, "time to wait inbetween cache sync")
+
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -47,10 +53,14 @@ var rootCmd = &cobra.Command{
 		if err := cfg.Validate(); err != nil {
 			api.Util.Entry().Fatalln("Set Env: SENDGRID_KEY, TWILIO_ACCOUNT, TWILIO_KEY, AUTH0_DOMAIN, AUTH0_CLIENT_SECRET, AUTH0_CLIENT_ID, STRIPE_KEY", err.Error())
 		}
-		if err := backend.NewBackend(
+		b := backend.NewBackend(
 			utility.NewUtility(cfg).PluginFunc,
 			contact.NewConatact(cfg).PluginFunc,
-		).Serve(fmt.Sprintf(":%v", port), debug); err != nil {
+			usercache.PluginFunc,
+		)
+		go usercache.Loop(syncPeriod)
+		err := b.Serve(fmt.Sprintf(":%v", port), debug)
+		if err != nil {
 			log.Fatalln(err.Error())
 		}
 	},
