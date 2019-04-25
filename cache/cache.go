@@ -1,16 +1,18 @@
 package cache
 
 import (
+	"github.com/autom8ter/api"
 	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/charge"
 	"github.com/stripe/stripe-go/customer"
 	"github.com/stripe/stripe-go/plan"
 	"github.com/stripe/stripe-go/product"
+	"github.com/stripe/stripe-go/sub"
 	"time"
 )
 
 type Cache struct {
-	Users         map[string]interface{}
+	Users         map[string]*api.User
 	Customers     map[string]*stripe.Customer
 	Plans         map[string]*stripe.Plan
 	Products      map[string]*stripe.Product
@@ -20,11 +22,12 @@ type Cache struct {
 
 func NewCache() *Cache {
 	return &Cache{
-		Users:     make(map[string]interface{}),
-		Customers: make(map[string]*stripe.Customer),
-		Plans:     make(map[string]*stripe.Plan),
-		Products:  make(map[string]*stripe.Product),
-		Charges:   make(map[string]*stripe.Charge),
+		Users:         make(map[string]*api.User),
+		Customers:     make(map[string]*stripe.Customer),
+		Plans:         make(map[string]*stripe.Plan),
+		Products:      make(map[string]*stripe.Product),
+		Charges:       make(map[string]*stripe.Charge),
+		Subscriptions: make(map[string]*stripe.Subscription),
 	}
 }
 
@@ -49,6 +52,11 @@ func (cache *Cache) Sync() {
 		c := charges.Charge()
 		cache.Charges[c.ID] = c
 	}
+	subs := sub.List(nil)
+	for subs.Next() {
+		s := subs.Subscription()
+		cache.Subscriptions[s.ID] = s
+	}
 }
 
 func (cache *Cache) Loop(duration time.Duration) {
@@ -56,42 +64,6 @@ func (cache *Cache) Loop(duration time.Duration) {
 		cache.Sync()
 		time.Sleep(duration)
 	}
-}
-
-func (cache *Cache) AddStripeCustomer(c *stripe.Customer) {
-	cache.Customers[c.Email] = c
-}
-
-func (cache *Cache) RemoveStripeCustomer(email string) {
-	cache.Customers[email] = nil
-}
-
-func (cache *Cache) GetStripeCustomer(email string) *stripe.Customer {
-	return cache.Customers[email]
-}
-
-func (cache *Cache) TotalStripeCustomers() int {
-	return len(cache.Customers)
-}
-
-func (cache *Cache) TotalStripePlans() int {
-	return len(cache.Plans)
-}
-
-func (cache *Cache) TotalStripeCharges() int {
-	return len(cache.Charges)
-}
-
-func (cache *Cache) TotalStripeProducts() int {
-	return len(cache.Products)
-}
-
-func (cache *Cache) TotalUsers() int {
-	return len(cache.Users)
-}
-
-func (cache *Cache) TotalSubscriptions() int {
-	return len(cache.Subscriptions)
 }
 
 var Working = NewCache()

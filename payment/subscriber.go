@@ -24,7 +24,7 @@ type Subscriber struct {
 	driver.PluginFunc
 }
 
-func (s *Subscriber) Subscribe(ctx context.Context, request *api.SubscribeRequest) (*api.Identifier, error) {
+func (s *Subscriber) Subscribe(ctx context.Context, request *api.SubscribeRequest) (*api.Bytes, error) {
 	cust := cache.Working.Customers[request.Email]
 	// create a subscription
 	subs, err := sub.New(&stripe.SubscriptionParams{
@@ -40,12 +40,10 @@ func (s *Subscriber) Subscribe(ctx context.Context, request *api.SubscribeReques
 	if err != nil {
 		return nil, err
 	}
-	return &api.Identifier{
-		Id: subs.ID,
-	}, nil
+	return api.AsBytes(subs), nil
 }
 
-func (s *Subscriber) Unsubscribe(ctx context.Context, request *api.UnSubscribeRequest) (*api.Identifier, error) {
+func (s *Subscriber) Unsubscribe(ctx context.Context, request *api.UnSubscribeRequest) (*api.Bytes, error) {
 	cust := cache.Working.Customers[request.Email]
 	for _, s := range cust.Subscriptions.Data {
 		if s.Plan.Nickname == request.Plan {
@@ -53,9 +51,7 @@ func (s *Subscriber) Unsubscribe(ctx context.Context, request *api.UnSubscribeRe
 			if err != nil {
 				return nil, err
 			}
-			return &api.Identifier{
-				Id: s.ID,
-			}, nil
+			return api.AsBytes(s), nil
 		}
 	}
 	return nil, errors.New(fmt.Sprintf("plan: %s not found for customer: %s", request.Plan, request.Email))

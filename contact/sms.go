@@ -13,42 +13,41 @@ type SMSer struct {
 	c *clientset.ClientSet
 }
 
+func (s *SMSer) SendSMSBlast(blast *api.SMSBlast, stream api.ContactService_SendSMSBlastServer) error {
+	for _, t := range blast.To {
+		resp, ex, err := s.c.Twilio.SendSMSWithCopilot(blast.Service, t, blast.Message.Value, blast.Callback, blast.App)
+		api.Util.Entry().Debugln(string(api.Util.MarshalYAML(ex)))
+		if err != nil {
+			return status.Errorf(codes.Internal, api.Util.WrapErr(err, string(api.Util.MarshalJSON(ex))).Error())
+		}
+		if err := stream.Send(api.AsBytes(resp)); err != nil {
+			return status.Errorf(codes.Internal, err.Error())
+		}
+	}
+	return nil
+}
+
 func NewSMSer(c *config.Config) *SMSer {
 	return &SMSer{
 		c: clientset.NewClientSet(c),
 	}
 }
 
-func (s *SMSer) GetSMS(ctx context.Context, r *api.Identifier) (*api.SMSStatus, error) {
+func (s *SMSer) GetSMS(ctx context.Context, r *api.Identifier) (*api.Bytes, error) {
 	resp, ex, err := s.c.Twilio.GetSMS(r.Id)
 	api.Util.Entry().Debugln(string(api.Util.MarshalYAML(ex)))
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, api.Util.WrapErr(err, string(api.Util.MarshalJSON(ex))).Error())
 	}
-	return &api.SMSStatus{
-		Id: &api.Identifier{
-			Id: resp.Sid,
-		},
-		Sms: &api.SMS{
-			To: resp.To,
-			Message: &api.Message{
-				Value: resp.Body,
-			},
-			MediaURL: resp.MediaUrl,
-		},
-		Status: resp.Status,
-		Uri:    resp.Url,
-	}, nil
+	return api.AsBytes(resp), nil
 
 }
 
-func (s *SMSer) SendSMS(ctx context.Context, m *api.SMS) (*api.Identifier, error) {
+func (s *SMSer) SendSMS(ctx context.Context, m *api.SMS) (*api.Bytes, error) {
 	resp, ex, err := s.c.Twilio.SendSMSWithCopilot(m.Service, m.To, m.Message.Value, m.Callback, m.App)
 	api.Util.Entry().Debugln(string(api.Util.MarshalYAML(ex)))
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, api.Util.WrapErr(err, string(api.Util.MarshalJSON(ex))).Error())
 	}
-	return &api.Identifier{
-		Id: resp.Url,
-	}, nil
+	return api.AsBytes(resp), nil
 }

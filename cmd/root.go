@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"github.com/autom8ter/api"
 	"github.com/autom8ter/backend"
-	"github.com/autom8ter/backend/admin"
 	"github.com/autom8ter/backend/cache"
 	"github.com/autom8ter/backend/config"
 	"github.com/autom8ter/backend/contact"
@@ -67,7 +66,6 @@ var rootCmd = &cobra.Command{
 			contact.NewConatact(cfg).PluginFunc,
 			user.NewUser().PluginFunc,
 			payment.NewSubscriber().PluginFunc,
-			admin.NewAdmin(email, name, cfg).PluginFunc,
 		)
 		err := b.Serve(fmt.Sprintf(":%v", port), debug)
 		if err != nil {
