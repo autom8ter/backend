@@ -2,7 +2,7 @@ module github.com/autom8ter/backend
 
 require (
 	cloud.google.com/go v0.37.2
-	github.com/autom8ter/api v0.0.0-20190425073503-b94af903643c
+	github.com/autom8ter/api v0.0.0-20190425082456-16da0dfb3e2a
 	github.com/autom8ter/engine v0.0.0-20190421032226-fadad0594395
 	github.com/autom8ter/gcloud v0.0.0-20190408073117-8b7a9496ac0d
 	github.com/gorilla/schema v1.1.0 // indirect
