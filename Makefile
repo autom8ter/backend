@@ -8,5 +8,3 @@ deploy: ## deploy to google endpoints
 
 build: ## build and submit to google container registry
 	gcloud builds submit --tag gcr.io/autom8ter-19/api:1.0 .
-
-release:

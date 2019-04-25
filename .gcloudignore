@@ -1,10 +1,3 @@
-release/backend_darwin*
-release/backend_windows*
-release/backend_freebsd*
-release/backend_openbsd*
-release/backend_netbsd*
-release/backend_linux_386
-release/backend_linux_arm
 vendor
 api
 backend
