@@ -41,6 +41,12 @@ github.com/autom8ter/api v0.0.0-20190425000242-33e86ade9929 h1:741E8EvQNMnZ5aj35
 github.com/autom8ter/api v0.0.0-20190425000242-33e86ade9929/go.mod h1:mU9Fx4FAv+/a8NO6SAEloBYu7Mfi5xa6ugzy0vyP4w4=
 github.com/autom8ter/api v0.0.0-20190425000611-d4ea41fb5c7c h1:HJFM75F6y+TYvZDSNi2J6WS6L/TSoo9anask4ZZdZ/g=
 github.com/autom8ter/api v0.0.0-20190425000611-d4ea41fb5c7c/go.mod h1:mU9Fx4FAv+/a8NO6SAEloBYu7Mfi5xa6ugzy0vyP4w4=
+github.com/autom8ter/api v0.0.0-20190425053146-a91c845241e7 h1:om4CVkivloIJ3mtT0DGk8j9DbHu5RAL8PoaVIdcUQ8M=
+github.com/autom8ter/api v0.0.0-20190425053146-a91c845241e7/go.mod h1:gqApVVhoJFcjb8r/li/fxGBS6/qn+3PKpRLZhVCcP0k=
+github.com/autom8ter/api v0.0.0-20190425053332-54b6e0f5bd96 h1:ilP0mhCpM3BSABxUpDfDBYBol53pNtOuWLWyc4HQty0=
+github.com/autom8ter/api v0.0.0-20190425053332-54b6e0f5bd96/go.mod h1:gqApVVhoJFcjb8r/li/fxGBS6/qn+3PKpRLZhVCcP0k=
+github.com/autom8ter/api v0.0.0-20190425055011-f12675228b2e h1:+aTFnwNSxrlV+bP5q5DL0qZ7lu1REV2g2gMr6GXIbOY=
+github.com/autom8ter/api v0.0.0-20190425055011-f12675228b2e/go.mod h1:gqApVVhoJFcjb8r/li/fxGBS6/qn+3PKpRLZhVCcP0k=
 github.com/autom8ter/engine v0.0.0-20190421032226-fadad0594395 h1:R35OfZLJfz27wMqnQ93mjpgbEfhIB/j49DczY5ap0Wc=
 github.com/autom8ter/engine v0.0.0-20190421032226-fadad0594395/go.mod h1:Ls37Jrvtcem1Or5jMi4xcj3Pnb89iYq3aojRyau96ng=
 github.com/autom8ter/gcloud v0.0.0-20190408073117-8b7a9496ac0d h1:ojw06rxJq3DZbuLNTqNXZfZA404B0xfcWwxtyAgTCb4=
@@ -237,6 +243,8 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+github.com/stripe/stripe-go v60.9.0+incompatible h1:JZiI3wZkHJmXyinMSdS5N9Zmmc4ZV1SuvvU8WjGJCmA=
+github.com/stripe/stripe-go v60.9.0+incompatible/go.mod h1:A1dQZmO/QypXmsL0T8axYZkSN/uA/T/A64pfKdBAMiY=
 github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07/go.mod h1:kDXzergiv9cbyO7IOYJZWg1U88JhDg3PB6klq9Hg2pA=
 github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljTbGfSG7qAOspJ7OScBnGdDN/yBr0sguwnwf0=
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=

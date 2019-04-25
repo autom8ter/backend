@@ -16,33 +16,41 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/autom8ter/api"
 	"github.com/autom8ter/backend"
+	"github.com/autom8ter/backend/config"
 	"github.com/autom8ter/backend/contact"
 	"github.com/autom8ter/backend/utility"
 	"log"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var credspath string
+var port int
+var debug bool
+
+func init() {
+	api.Util.DotEnv()
+	rootCmd.Flags().IntVarP(&port, "port", "p", 3000, "port to serve on")
+	rootCmd.Flags().StringVarP(&credspath, "creds", "c", "credentials.json", "path to gcp service account credentials (JSON)")
+	rootCmd.Flags().BoolVarP(&debug, "debug", "d", false, "enable debugging mode for development")
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use: "backend",
-	Long: `
-01000010 01100001 01100011 01101011 01100101 01101110 01100100
-
-The Autom8ter gprc API Backend
-
-`,
+	Use:   "backend",
+	Short: "The Autom8ter gprc API Backend",
 	Run: func(cmd *cobra.Command, args []string) {
+		var cfg = config.FromEnv(credspath)
+		if err := cfg.Validate(); err != nil {
+			api.Util.Entry().Fatalln("Set Env: SENDGRID_KEY, TWILIO_ACCOUNT, TWILIO_KEY, AUTH0_DOMAIN, AUTH0_CLIENT_SECRET, AUTH0_CLIENT_ID, STRIPE_KEY", err.Error())
+		}
 		if err := backend.NewBackend(
-			utility.NewUtility().PluginFunc,
-			contact.NewConatact().PluginFunc,
-		).Serve(viper.GetString("addr"), viper.GetBool("debug")); err != nil {
+			utility.NewUtility(cfg).PluginFunc,
+			contact.NewConatact(cfg).PluginFunc,
+		).Serve(fmt.Sprintf(":%v", port), debug); err != nil {
 			log.Fatalln(err.Error())
 		}
 	},
@@ -54,36 +62,5 @@ func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
-	}
-}
-
-func init() {
-	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.backend.yaml)")
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".temp" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".backend")
-	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-	viper.SetDefault("addr", ":3000")
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }

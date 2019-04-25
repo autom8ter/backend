@@ -5,15 +5,17 @@ import (
 	"context"
 	"fmt"
 	"github.com/autom8ter/api"
-	"github.com/autom8ter/backend/clients"
+	"github.com/autom8ter/backend/clientset"
+	"github.com/autom8ter/backend/config"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
 )
 
-func NewEchoer() *Echoer {
-	tr, err := clients.GCP.Translate(clients.Context)
+func NewEchoer(c *config.Config) *Echoer {
+	cc := clientset.NewClientSet(c)
+	tr, err := cc.GCP.Translate(api.Context)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

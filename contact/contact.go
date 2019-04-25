@@ -2,6 +2,7 @@ package contact
 
 import (
 	"github.com/autom8ter/api"
+	"github.com/autom8ter/backend/config"
 	"github.com/autom8ter/engine/driver"
 	"google.golang.org/grpc"
 )
@@ -13,11 +14,11 @@ type Contact struct {
 	driver.PluginFunc
 }
 
-func NewConatact() *Contact {
+func NewConatact(cfg *config.Config) *Contact {
 	c := &Contact{
-		SMSer:   &SMSer{},
-		Caller:  &Caller{},
-		Emailer: &Emailer{},
+		SMSer:   NewSMSer(cfg),
+		Caller:  NewCaller(cfg),
+		Emailer: NewEmailer(cfg),
 	}
 	c.PluginFunc = func(s *grpc.Server) {
 		api.RegisterContactServiceServer(s, c)

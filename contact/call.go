@@ -3,20 +3,27 @@ package contact
 import (
 	"context"
 	"github.com/autom8ter/api"
-	"github.com/autom8ter/backend/clients"
-	"github.com/sfreiberg/gotwilio"
+	"github.com/autom8ter/backend/clientset"
+	"github.com/autom8ter/backend/config"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-type Caller struct{}
+type Caller struct {
+	c *clientset.ClientSet
+}
 
-func (*Caller) SendCall(ctx context.Context, m *api.Call) (*api.Identifier, error) {
+func NewCaller(c *config.Config) *Caller {
+	return &Caller{
+		c: clientset.NewClientSet(c),
+	}
+}
 
-	resp, ex, err := clients.Twilio.CallWithUrlCallbacks(clients.TWILIO_CALL_NUMBER, m.To, gotwilio.NewCallbackParameters(m.Callback))
-	clients.Util.Entry().Debugln(string(clients.Util.MarshalYAML(ex)))
+func (c *Caller) SendCall(ctx context.Context, m *api.Call) (*api.Identifier, error) {
+	resp, ex, err := c.c.Twilio.CallWithApplicationCallbacks(m.From, m.To, m.App)
+	api.Util.Entry().Debugln(string(api.Util.MarshalYAML(ex)))
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, clients.Util.WrapErr(err, string(clients.Util.MarshalJSON(ex))).Error())
+		return nil, status.Errorf(codes.Internal, api.Util.WrapErr(err, string(api.Util.MarshalJSON(ex))).Error())
 	}
 	return &api.Identifier{
 		Id: resp.Uri,

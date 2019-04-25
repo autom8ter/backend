@@ -3,7 +3,6 @@ package utility
 import (
 	"context"
 	"github.com/autom8ter/api"
-	"github.com/autom8ter/backend/clients"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"html/template"
@@ -19,7 +18,7 @@ func (r *Renderer) Render(ctx context.Context, tmpl *api.Template) (*api.Bytes, 
 	bits := &api.Bytes{
 		Bits: []byte{},
 	}
-	err = clients.Util.RenderHTML(t, tmpl.Data, bits)
+	err = api.Util.RenderHTML(t, tmpl.Data, bits)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to render template: %s", err.Error())
 	}
