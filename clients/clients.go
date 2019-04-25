@@ -7,16 +7,21 @@ import (
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sfreiberg/gotwilio"
 	"google.golang.org/api/option"
+	"log"
 	"os"
 )
 
 func init() {
-	GCP = gcloud.NewGCP(option.WithCredentialsFile("credentials.json"))
+	if _, err := os.Stat(GCP_CREDENTIALS); err != nil {
+		log.Fatalln("expected GCP credentials.json in $PWD")
+	}
+	GCP = gcloud.NewGCP(option.WithCredentialsFile(GCP_CREDENTIALS))
 	Context = context.WithValue(context.TODO(), "env", os.Environ())
 	Twilio = gotwilio.NewTwilioClient(TWILIO_ACCOUNT, TWILIO_KEY)
 	SendGrid = sendgrid.NewSendClient(SENDGRID_KEY)
 }
 
+var GCP_CREDENTIALS = "credentials.json"
 var SENDGRID_KEY = os.Getenv("SENDGRID_KEY")
 var SENDGRID_EMAIL = os.Getenv("SENDGRID_EMAIL")
 var SENDGRID_NAME = os.Getenv("SENDGRID_NAME")
