@@ -65,6 +65,12 @@ github.com/autom8ter/api v0.0.0-20190425232916-6dff144a1631 h1:/4YqjPm7V8N0lJnEb
 github.com/autom8ter/api v0.0.0-20190425232916-6dff144a1631/go.mod h1:i8fmEaonuhxlcZyygwAK+MYKqRAKLyf6IN6uBgCrK78=
 github.com/autom8ter/api v0.0.0-20190425234118-ec52ef2a1d3c h1:rj7MFTuJXATkvq8AGNsVUsgT1OodRhN3ZG7XnGXnwjw=
 github.com/autom8ter/api v0.0.0-20190425234118-ec52ef2a1d3c/go.mod h1:i8fmEaonuhxlcZyygwAK+MYKqRAKLyf6IN6uBgCrK78=
+github.com/autom8ter/api v0.0.0-20190426085114-93c4c74f8bce h1:sZHNl+TIfn38mjCuDBhL0mGsuxQv9KMnCHYcRu3vfKc=
+github.com/autom8ter/api v0.0.0-20190426085114-93c4c74f8bce/go.mod h1:i8fmEaonuhxlcZyygwAK+MYKqRAKLyf6IN6uBgCrK78=
+github.com/autom8ter/api v0.0.0-20190426085553-7559005191e9 h1:RCDOnQ1rHXgXMWxv9AJTgi99Tp5rqqr/MYNrcOIO0Z4=
+github.com/autom8ter/api v0.0.0-20190426085553-7559005191e9/go.mod h1:i8fmEaonuhxlcZyygwAK+MYKqRAKLyf6IN6uBgCrK78=
+github.com/autom8ter/api v0.0.0-20190426090352-4353fbda4e78 h1:u+IeO4+70MDbNbeHAMl6Gdzp1Oq8Mmfk7oKMq64XWzc=
+github.com/autom8ter/api v0.0.0-20190426090352-4353fbda4e78/go.mod h1:i8fmEaonuhxlcZyygwAK+MYKqRAKLyf6IN6uBgCrK78=
 github.com/autom8ter/engine v0.0.0-20190421032226-fadad0594395 h1:R35OfZLJfz27wMqnQ93mjpgbEfhIB/j49DczY5ap0Wc=
 github.com/autom8ter/engine v0.0.0-20190421032226-fadad0594395/go.mod h1:Ls37Jrvtcem1Or5jMi4xcj3Pnb89iYq3aojRyau96ng=
 github.com/autom8ter/gcloud v0.0.0-20190408073117-8b7a9496ac0d h1:ojw06rxJq3DZbuLNTqNXZfZA404B0xfcWwxtyAgTCb4=

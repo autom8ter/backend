@@ -22,10 +22,9 @@ import (
 	"github.com/autom8ter/backend/config"
 	"github.com/autom8ter/backend/contact"
 	"github.com/autom8ter/backend/payment"
-	"github.com/stripe/stripe-go"
-
-	"github.com/autom8ter/backend/user"
+	"github.com/autom8ter/backend/resource"
 	"github.com/autom8ter/backend/utility"
+	"github.com/stripe/stripe-go"
 	"log"
 	"os"
 	"time"
@@ -64,8 +63,8 @@ var rootCmd = &cobra.Command{
 		b := backend.NewBackend(
 			utility.NewUtility(cfg).PluginFunc,
 			contact.NewConatact(cfg).PluginFunc,
-			user.NewUser().PluginFunc,
-			payment.NewSubscriber().PluginFunc,
+			payment.NewPayment().PluginFunc,
+			resource.NewResource().PluginFunc,
 		)
 		err := b.Serve(fmt.Sprintf(":%v", port), debug)
 		if err != nil {

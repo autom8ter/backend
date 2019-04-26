@@ -11,6 +11,7 @@ type Contact struct {
 	*SMSer
 	*Caller
 	*Emailer
+	*Searcher
 	driver.PluginFunc
 }
 
