@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/autom8ter/api"
+	"github.com/autom8ter/api/common"
 	"github.com/pkg/errors"
 	"os"
 )
@@ -21,7 +21,7 @@ func (c *Config) Validate() error {
 	if _, err := os.Stat(c.GCPServiceCredentialsPath); err != nil {
 		return errors.Wrap(err, "gcp service account credentials not found. path: "+c.GCPServiceCredentialsPath)
 	}
-	return api.Util.Validate(c)
+	return common.Util.Validate(c)
 }
 
 func FromEnv(gcpCredsPath string) *Config {

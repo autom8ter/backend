@@ -3,6 +3,7 @@ package contact
 import (
 	"context"
 	"github.com/autom8ter/api"
+	"github.com/autom8ter/api/common"
 	"github.com/autom8ter/backend/clientset"
 	"github.com/autom8ter/backend/config"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
@@ -15,18 +16,18 @@ type Emailer struct {
 }
 
 func (e *Emailer) SendEmailBlast(email *api.EmailBlastRequest, stream api.ContactService_SendEmailBlastServer) error {
-	for k, v := range email.Blast.NameAddress {
-		from := mail.NewEmail(email.FromName, email.FromEmail)
-		to := mail.NewEmail(k, v)
-		message := mail.NewSingleEmail(from, email.Blast.Subject, to, email.Blast.Plain, email.Blast.Html)
+	for k, v := range email.Blast.NameAddress.StringMap {
+		from := mail.NewEmail(email.FromName.Text, email.FromEmail.Text)
+		to := mail.NewEmail(k, v.Text)
+		message := mail.NewSingleEmail(from, email.Blast.Subject.Text, to, email.Blast.Plain.Text, email.Blast.Html.Text)
 		resp, err := e.c.Sendgrid.Send(message)
 		if err != nil {
 			return err
 		}
-		if err := stream.Send(&api.Message{
-			Value: resp.Body,
+		if err := stream.Send(&common.String{
+			Text: resp.Body,
 		}); err != nil {
-			return api.Util.WrapErr(api.Util.WrapErr(err, resp.Body), string(resp.StatusCode))
+			return common.ToError(common.ToError(err, resp.Body), string(resp.StatusCode))
 		}
 	}
 	return nil
@@ -38,15 +39,15 @@ func NewEmailer(c *config.Config) *Emailer {
 	}
 }
 
-func (e *Emailer) SendEmail(ctx context.Context, email *api.EmailRequest) (*api.Message, error) {
-	from := mail.NewEmail(email.FromName, email.FromEmail)
-	to := mail.NewEmail(email.Email.Name, email.Email.Address)
-	message := mail.NewSingleEmail(from, email.Email.Subject, to, email.Email.Plain, email.Email.Html)
+func (e *Emailer) SendEmail(ctx context.Context, email *api.EmailRequest) (*common.String, error) {
+	from := mail.NewEmail(email.FromName.Text, email.FromEmail.Text)
+	to := mail.NewEmail(email.Email.Name.Text, email.Email.Address.Text)
+	message := mail.NewSingleEmail(from, email.Email.Subject.Text, to, email.Email.Plain.Text, email.Email.Html.Text)
 	resp, err := e.c.Sendgrid.Send(message)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	return &api.Message{
-		Value: resp.Body,
+	return &common.String{
+		Text: resp.Body,
 	}, nil
 }

@@ -2,9 +2,12 @@ package contact
 
 import (
 	"context"
+	"fmt"
 	"github.com/autom8ter/api"
+	"github.com/autom8ter/api/common"
 	"github.com/autom8ter/backend/clientset"
 	"github.com/autom8ter/backend/config"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -14,13 +17,12 @@ type Caller struct {
 }
 
 func (c *Caller) SendCallBlast(b *api.CallBlast, stream api.ContactService_SendCallBlastServer) error {
-	for _, t := range b.To {
-		resp, ex, err := c.c.Twilio.CallWithApplicationCallbacks(b.From, t, b.App)
-		api.Util.Entry().Debugln(string(api.Util.MarshalYAML(ex)))
+	for _, t := range b.To.Strings {
+		resp, ex, err := c.c.Twilio.CallWithApplicationCallbacks(b.From.Text, t.Text, b.App.Text)
 		if err != nil {
-			return status.Errorf(codes.Internal, api.Util.WrapErr(err, string(api.Util.MarshalJSON(ex))).Error())
+			return status.Errorf(codes.Internal, errors.Wrap(err, fmt.Sprintf("%v", ex)).Error())
 		}
-		if err := stream.Send(api.AsBytes(resp)); err != nil {
+		if err := stream.Send(common.AsBytes(resp)); err != nil {
 			return err
 		}
 	}
@@ -33,11 +35,10 @@ func NewCaller(c *config.Config) *Caller {
 	}
 }
 
-func (c *Caller) SendCall(ctx context.Context, m *api.Call) (*api.Bytes, error) {
-	resp, ex, err := c.c.Twilio.CallWithApplicationCallbacks(m.From, m.To, m.App)
-	api.Util.Entry().Debugln(string(api.Util.MarshalYAML(ex)))
+func (c *Caller) SendCall(ctx context.Context, m *api.Call) (*common.Bytes, error) {
+	resp, ex, err := c.c.Twilio.CallWithApplicationCallbacks(m.From.Text, m.To.Text, m.App.Text)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, api.Util.WrapErr(err, string(api.Util.MarshalJSON(ex))).Error())
+		return nil, status.Errorf(codes.Internal, errors.Wrap(err, fmt.Sprintf("%v", ex)).Error())
 	}
-	return api.AsBytes(resp), nil
+	return common.AsBytes(resp), nil
 }

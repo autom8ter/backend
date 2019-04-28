@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/autom8ter/api"
+	"github.com/autom8ter/api/common"
 	"github.com/autom8ter/backend/cache"
 	"github.com/autom8ter/engine/driver"
+	"github.com/pkg/errors"
 	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/sub"
 	"google.golang.org/grpc"
@@ -17,6 +19,10 @@ type Payment struct {
 	driver.PluginFunc
 }
 
+func (s *Payment) SearchPhoneNumber(r *api.SearchPhoneNumberRequest, stream api.PaymentService_SearchPhoneNumberServer) error {
+	return status.Error(codes.Unimplemented, "api is not yet implemented")
+}
+
 func NewPayment() *Payment {
 	p := &Payment{}
 	p.PluginFunc = func(s *grpc.Server) {
@@ -26,38 +32,38 @@ func NewPayment() *Payment {
 }
 
 func (*Payment) PurchasePhoneNumber(c context.Context, i *api.PhoneNumber) (*api.PhoneNumberResource, error) {
-	return nil, status.Errorf(codes.Unimplemented, "service not yet available")
+	return nil, status.Error(codes.Unimplemented, "api is not yet implemented")
 }
 
-func (s *Payment) Subscribe(ctx context.Context, request *api.SubscribeRequest) (*api.Bytes, error) {
-	cust := cache.Working.Customers[request.Email]
+func (s *Payment) Subscribe(ctx context.Context, request *api.SubscribeRequest) (*common.Bytes, error) {
+	cust := cache.Working.Customers[request.Email.Text]
 	// create a subscription
 	subs, err := sub.New(&stripe.SubscriptionParams{
-		Customer: stripe.String(cust.ID),
-		Plan:     stripe.String(request.Plan),
+		Customer: common.ToString(cust.ID).Pointer(),
+		Plan:     request.Plan.Normalize().Pointer(),
 		Card: &stripe.CardParams{
-			Number:   stripe.String(request.Card.Number),
-			ExpMonth: stripe.String(request.Card.ExpMonth),
-			ExpYear:  stripe.String(request.Card.ExpYear),
-			CVC:      stripe.String(request.Card.Cvc),
+			Number:   request.Card.Number.Pointer(),
+			ExpMonth: request.Card.ExpMonth.Pointer(),
+			ExpYear:  request.Card.ExpYear.Pointer(),
+			CVC:      request.Card.Cvc.Pointer(),
 		},
 	})
 	if err != nil {
 		return nil, err
 	}
-	return api.AsBytes(subs), nil
+	return common.AsBytes(subs), nil
 }
 
-func (s *Payment) Unsubscribe(ctx context.Context, request *api.UnSubscribeRequest) (*api.Bytes, error) {
-	cust := cache.Working.Customers[request.Email]
+func (s *Payment) Unsubscribe(ctx context.Context, request *api.UnSubscribeRequest) (*common.Bytes, error) {
+	cust := cache.Working.Customers[request.Email.Text]
 	for _, s := range cust.Subscriptions.Data {
-		if s.Plan.Nickname == request.Plan {
+		if s.Plan.Nickname == request.Plan.Normalize().Text {
 			s, err := sub.Cancel(s.ID, nil)
 			if err != nil {
 				return nil, err
 			}
-			return api.AsBytes(s), nil
+			return common.AsBytes(s), nil
 		}
 	}
-	return nil, api.Util.NewError(fmt.Sprintf("plan: %s not found for customer: %s", request.Plan, request.Email))
+	return nil, errors.New(fmt.Sprintf("plan: %s not found for customer: %s", request.Plan, request.Email))
 }

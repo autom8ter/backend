@@ -3,8 +3,7 @@ package utility
 import (
 	"cloud.google.com/go/translate"
 	"context"
-	"fmt"
-	"github.com/autom8ter/api"
+	"github.com/autom8ter/api/common"
 	"github.com/autom8ter/backend/clientset"
 	"github.com/autom8ter/backend/config"
 	"golang.org/x/text/language"
@@ -15,73 +14,64 @@ import (
 
 func NewEchoer(c *config.Config) *Echoer {
 	cc := clientset.NewClientSet(c)
-	tr, err := cc.GCP.Translate(api.Context)
+	tr, err := cc.GCP.Translate(context.TODO())
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 	e := &Echoer{
-		Translator: tr,
+		translator: tr,
 	}
 	return e
 }
 
 type Echoer struct {
-	Translator *translate.Client
+	translator *translate.Client
 }
 
-func (b *Echoer) EchoSpanish(ctx context.Context, message *api.Message) (*api.Message, error) {
-	resp, err := b.Translator.Translate(ctx, []string{message.Value}, language.Spanish, nil)
+func (b *Echoer) EchoSpanish(ctx context.Context, message *common.String) (*common.String, error) {
+	resp, err := b.translator.Translate(ctx, []string{message.Text}, language.Spanish, nil)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to translate spanish: %s", err.Error())
 	}
-	return &api.Message{
-		Value: resp[0].Text,
-	}, nil
+	return common.ToString(resp[0].Text), nil
 }
 
-func (b *Echoer) EchoChinese(ctx context.Context, message *api.Message) (*api.Message, error) {
-	resp, err := b.Translator.Translate(ctx, []string{message.Value}, language.Chinese, nil)
+func (b *Echoer) EchoChinese(ctx context.Context, message *common.String) (*common.String, error) {
+	resp, err := b.translator.Translate(ctx, []string{message.Text}, language.Chinese, nil)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to translate chinese: %s", err.Error())
 	}
-	return &api.Message{
-		Value: resp[0].Text,
-	}, nil
+	return common.ToString(resp[0].Text), nil
 }
 
-func (b *Echoer) EchoEnglish(ctx context.Context, message *api.Message) (*api.Message, error) {
-	resp, err := b.Translator.Translate(ctx, []string{message.Value}, language.English, nil)
+func (b *Echoer) EchoEnglish(ctx context.Context, message *common.String) (*common.String, error) {
+	resp, err := b.translator.Translate(ctx, []string{message.Text}, language.English, nil)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to translate english: %s", err.Error())
 	}
-	return &api.Message{
-		Value: resp[0].Text,
-	}, nil
+	return common.ToString(resp[0].Text), nil
+
 }
 
-func (b *Echoer) EchoHindi(ctx context.Context, message *api.Message) (*api.Message, error) {
-	resp, err := b.Translator.Translate(ctx, []string{message.Value}, language.Hindi, nil)
+func (b *Echoer) EchoHindi(ctx context.Context, message *common.String) (*common.String, error) {
+	resp, err := b.translator.Translate(ctx, []string{message.Text}, language.Hindi, nil)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to translate hindi: %s", err.Error())
 	}
-	return &api.Message{
-		Value: resp[0].Text,
-	}, nil
+	return common.ToString(resp[0].Text), nil
+
 }
 
-func (b *Echoer) EchoArabic(ctx context.Context, message *api.Message) (*api.Message, error) {
-	resp, err := b.Translator.Translate(ctx, []string{message.Value}, language.Arabic, nil)
+func (b *Echoer) EchoArabic(ctx context.Context, message *common.String) (*common.String, error) {
+	resp, err := b.translator.Translate(ctx, []string{message.Text}, language.Arabic, nil)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to translate arabic: %s", err.Error())
 	}
-	return &api.Message{
-		Value: resp[0].Text,
-	}, nil
+	return common.ToString(resp[0].Text), nil
+
 }
 
-func (b *Echoer) Echo(ctx context.Context, e *api.Message) (*api.Message, error) {
-	return &api.Message{
-		Value: fmt.Sprintf("echoed: %s", e.Value),
-	}, nil
+func (b *Echoer) Echo(ctx context.Context, message *common.String) (*common.String, error) {
+	return common.ToString(message.Text), nil
 
 }

@@ -1,7 +1,7 @@
 package clientset
 
 import (
-	"github.com/autom8ter/api"
+	"github.com/autom8ter/api/common"
 	"github.com/autom8ter/backend/config"
 	"github.com/autom8ter/gcloud"
 	"github.com/sendgrid/sendgrid-go"
@@ -19,7 +19,7 @@ type ClientSet struct {
 
 func NewClientSet(c *config.Config) *ClientSet {
 	if err := c.Validate(); err != nil {
-		api.Util.Entry().Warnln("validating config:", err.Error())
+		common.Util.Entry().Warnln("validating config:", err.Error())
 	}
 	stripe.Key = c.StripeKey
 	return &ClientSet{

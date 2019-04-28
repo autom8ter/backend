@@ -9,15 +9,12 @@ import (
 
 type Utility struct {
 	*Echoer
-	*Marshaler
-	*Renderer
 	driver.PluginFunc
 }
 
 func NewUtility(c *config.Config) *Utility {
 	u := &Utility{
-		Echoer:    NewEchoer(c),
-		Marshaler: NewMarshaler(),
+		Echoer: NewEchoer(c),
 	}
 	u.PluginFunc = func(s *grpc.Server) {
 		api.RegisterUtilityServiceServer(s, u)
