@@ -12,6 +12,8 @@ import (
 )
 
 type Cache struct {
+	Looping       bool
+	SyncFrequency time.Duration
 	Users         map[string]*api.User
 	Customers     map[string]*stripe.Customer
 	Plans         map[string]*stripe.Plan
@@ -20,8 +22,10 @@ type Cache struct {
 	Subscriptions map[string]*stripe.Subscription
 }
 
-func NewCache() *Cache {
+func DefaultCache() *Cache {
 	return &Cache{
+		Looping:       false,
+		SyncFrequency: DEFAULT_SYNC_FREQUENCY,
 		Users:         make(map[string]*api.User),
 		Customers:     make(map[string]*stripe.Customer),
 		Plans:         make(map[string]*stripe.Plan),
@@ -59,17 +63,22 @@ func (cache *Cache) Sync() {
 	}
 }
 
-func (cache *Cache) Loop(duration time.Duration) {
-	for {
+func (cache *Cache) Loop() {
+	cache.Looping = true
+	for cache.Looping {
 		cache.Sync()
-		time.Sleep(duration)
+		time.Sleep(cache.SyncFrequency)
 	}
+	cache.Looping = false
 }
 
-var Working = NewCache()
+var Working = DefaultCache()
 
-var SYNC_FREQUENCY = 1 * time.Minute
+var DEFAULT_SYNC_FREQUENCY = 1 * time.Minute
 
-func Init() {
-	go Working.Loop(SYNC_FREQUENCY)
+func Init(frequency time.Duration) {
+	if frequency != 0 {
+		Working.SyncFrequency = frequency
+	}
+	go Working.Loop()
 }

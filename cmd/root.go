@@ -18,18 +18,16 @@ import (
 	"fmt"
 	"github.com/autom8ter/api/common"
 	"github.com/autom8ter/backend"
-	"github.com/autom8ter/backend/cache"
+	"github.com/autom8ter/backend/admin"
 	"github.com/autom8ter/backend/config"
 	"github.com/autom8ter/backend/contact"
 	"github.com/autom8ter/backend/payment"
 	"github.com/autom8ter/backend/user"
 	"github.com/autom8ter/backend/utility"
+	"github.com/spf13/cobra"
 	"github.com/stripe/stripe-go"
 	"log"
 	"os"
-	"time"
-
-	"github.com/spf13/cobra"
 )
 
 var credspath string
@@ -43,7 +41,6 @@ func init() {
 	rootCmd.Flags().IntVarP(&port, "port", "p", 3000, "port to serve on")
 	rootCmd.Flags().StringVarP(&credspath, "creds", "c", "credentials.json", "path to gcp service account credentials (JSON)")
 	rootCmd.Flags().BoolVarP(&debug, "debug", "d", false, "enable debugging mode for development")
-	rootCmd.Flags().DurationVarP(&cache.SYNC_FREQUENCY, "sync", "s", 1*time.Minute, "time to wait inbetween cache sync")
 	rootCmd.Flags().StringVarP(&email, "email", "e", os.Getenv("SENDGRID_EMAIL"), "sendgrid email for admin->user emails")
 	rootCmd.Flags().StringVarP(&name, "name", "n", "Admin", "name to user in admin emails")
 
@@ -59,8 +56,8 @@ var rootCmd = &cobra.Command{
 			common.Util.Entry().Fatalln("Set Env: SENDGRID_KEY, TWILIO_ACCOUNT, TWILIO_KEY, AUTH0_DOMAIN, AUTH0_CLIENT_SECRET, AUTH0_CLIENT_ID, STRIPE_KEY", err.Error())
 		}
 		stripe.Key = cfg.StripeKey
-		cache.Init()
 		b := backend.NewBackend(
+			admin.NewAdmin().PluginFunc,
 			utility.NewUtility(cfg).PluginFunc,
 			contact.NewConatact(cfg).PluginFunc,
 			payment.NewPayment().PluginFunc,
