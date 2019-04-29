@@ -22,7 +22,22 @@ func (c *Caller) SendCallBlast(b *api.CallBlast, stream api.ContactService_SendC
 		if err != nil {
 			return status.Errorf(codes.Internal, errors.Wrap(err, fmt.Sprintf("%v", ex)).Error())
 		}
-		if err := stream.Send(common.AsBytes(resp)); err != nil {
+		if err := stream.Send(&api.CallResponse{
+			Id:            &common.Identifier{Id: common.ToString(resp.Sid)},
+			To:            common.ToString(resp.To),
+			From:          common.ToString(resp.From),
+			Status:        common.ToString(resp.Status),
+			AnsweredBy:    common.ToString(resp.AnsweredBy),
+			ForwardedFrom: common.ToString(resp.ForwardedFrom),
+			CallerName:    common.ToString(resp.CallerName),
+			Annotations: common.ToStringMap(map[string]string{
+				"annotation":       resp.Annotation,
+				"date_created":     resp.DateCreated,
+				"date_updated":     resp.DateUpdated,
+				"end_time":         resp.EndTime,
+				"phone_number_sid": resp.PhoneNumberSid,
+			}),
+		}); err != nil {
 			return err
 		}
 	}
@@ -35,10 +50,25 @@ func NewCaller(c *config.Config) *Caller {
 	}
 }
 
-func (c *Caller) SendCall(ctx context.Context, m *api.Call) (*common.Bytes, error) {
+func (c *Caller) SendCall(ctx context.Context, m *api.Call) (*api.CallResponse, error) {
 	resp, ex, err := c.c.Twilio.CallWithApplicationCallbacks(m.From.Text, m.To.Text, m.App.Text)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, errors.Wrap(err, fmt.Sprintf("%v", ex)).Error())
 	}
-	return common.AsBytes(resp), nil
+	return &api.CallResponse{
+		Id:            &common.Identifier{Id: common.ToString(resp.Sid)},
+		To:            common.ToString(resp.To),
+		From:          common.ToString(resp.From),
+		Status:        common.ToString(resp.Status),
+		AnsweredBy:    common.ToString(resp.AnsweredBy),
+		ForwardedFrom: common.ToString(resp.ForwardedFrom),
+		CallerName:    common.ToString(resp.CallerName),
+		Annotations: common.ToStringMap(map[string]string{
+			"annotation":       resp.Annotation,
+			"date_created":     resp.DateCreated,
+			"date_updated":     resp.DateUpdated,
+			"end_time":         resp.EndTime,
+			"phone_number_sid": resp.PhoneNumberSid,
+		}),
+	}, nil
 }

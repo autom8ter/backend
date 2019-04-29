@@ -22,7 +22,6 @@ import (
 	"github.com/autom8ter/backend/config"
 	"github.com/autom8ter/backend/contact"
 	"github.com/autom8ter/backend/payment"
-	"github.com/autom8ter/backend/resource"
 	"github.com/autom8ter/backend/user"
 	"github.com/autom8ter/backend/utility"
 	"github.com/stripe/stripe-go"
@@ -65,7 +64,6 @@ var rootCmd = &cobra.Command{
 			utility.NewUtility(cfg).PluginFunc,
 			contact.NewConatact(cfg).PluginFunc,
 			payment.NewPayment().PluginFunc,
-			resource.NewResource().PluginFunc,
 			user.NewUser().PluginFunc,
 		)
 		err := b.Serve(fmt.Sprintf(":%v", port), debug)

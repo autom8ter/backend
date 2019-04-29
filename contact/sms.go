@@ -22,7 +22,20 @@ func (s *SMSer) SendSMSBlast(blast *api.SMSBlast, stream api.ContactService_Send
 		if err != nil {
 			return status.Errorf(codes.Internal, errors.Wrap(err, fmt.Sprintf("%v", ex)).Error())
 		}
-		if err := stream.Send(common.AsBytes(resp)); err != nil {
+		if err := stream.Send(&api.SMSResponse{
+			Id: &common.Identifier{
+				Id: common.ToString(resp.Sid),
+			},
+			To:       common.ToString(resp.To),
+			From:     common.ToString(resp.From),
+			MediaUrl: common.ToString(resp.MediaUrl),
+			Body:     common.ToString(resp.Body),
+			Status:   common.ToString(resp.Status),
+			Annotations: common.ToStringMap(map[string]string{
+				"date_created": resp.DateCreated,
+				"date_updated": resp.DateUpdate,
+			}),
+		}); err != nil {
 			return status.Errorf(codes.Internal, err.Error())
 		}
 	}
@@ -35,19 +48,45 @@ func NewSMSer(c *config.Config) *SMSer {
 	}
 }
 
-func (s *SMSer) GetSMS(ctx context.Context, r *common.Identifier) (*common.Bytes, error) {
+func (s *SMSer) GetSMS(ctx context.Context, r *common.Identifier) (*api.SMSResponse, error) {
 	resp, ex, err := s.c.Twilio.GetSMS(r.Id.Text)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, errors.Wrap(err, fmt.Sprintf("%v", ex)).Error())
 	}
-	return common.AsBytes(resp), nil
+	return &api.SMSResponse{
+		Id: &common.Identifier{
+			Id: common.ToString(resp.Sid),
+		},
+		To:       common.ToString(resp.To),
+		From:     common.ToString(resp.From),
+		MediaUrl: common.ToString(resp.MediaUrl),
+		Body:     common.ToString(resp.Body),
+		Status:   common.ToString(resp.Status),
+		Annotations: common.ToStringMap(map[string]string{
+			"date_created": resp.DateCreated,
+			"date_updated": resp.DateUpdate,
+		}),
+	}, nil
 
 }
 
-func (s *SMSer) SendSMS(ctx context.Context, m *api.SMS) (*common.Bytes, error) {
+func (s *SMSer) SendSMS(ctx context.Context, m *api.SMS) (*api.SMSResponse, error) {
 	resp, ex, err := s.c.Twilio.SendSMSWithCopilot(m.Service.Text, m.To.Text, m.Message.Text, m.Callback.Text, m.App.Text)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, errors.Wrap(err, fmt.Sprintf("%v", ex)).Error())
 	}
-	return common.AsBytes(resp), nil
+	return &api.SMSResponse{
+		Id: &common.Identifier{
+			Id: common.ToString(resp.Sid),
+		},
+		To:       common.ToString(resp.To),
+		From:     common.ToString(resp.From),
+		MediaUrl: common.ToString(resp.MediaUrl),
+		Body:     common.ToString(resp.Body),
+		Status:   common.ToString(resp.Status),
+		Annotations: common.ToStringMap(map[string]string{
+			"date_created": resp.DateCreated,
+			"date_updated": resp.DateUpdate,
+		}),
+	}, nil
 }
